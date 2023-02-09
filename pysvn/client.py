@@ -64,9 +64,12 @@ class Client:
             List[LogEntry]: list of log entries.
         """
         revision = revision.name if type(revision) == Revision else revision
-        log_cmd = f'log --xml --revision {revision}' if not file else f'log {file} --xml --revision {revision}'
+        if not file:
+            log_cmd = ['log', '--xml', '--revision', revision]
+        else:
+            log_cmd = ['log', file, '--xml', '--revision', revision]
         log_entries: List[LogEntry] = []
-        cmd = self._run_svn_cmd(log_cmd.split(' '))
+        cmd = self._run_svn_cmd(log_cmd)
         data, stderr = get_output(cmd)
 
         if stderr:
